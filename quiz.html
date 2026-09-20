@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz · Estúdio de Vozes</title>
+<style>
+:root{
+  --preto:#0d0f14; --console:#161a23; --console2:#1e2430; --borda:#2c3444;
+  --texto:#e8ecf4; --suave:#a7b0c2; --dourado:#f3c14b; --vermelho:#e0443e;
+  --verde:#39d98a; --ciano:#4ecdc4; --amarelo:#ffd93d;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--preto);color:var(--texto);
+  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;font-size:17px;line-height:1.7;}
+a{color:var(--dourado);}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px 80px;}
+header.top{background:linear-gradient(135deg,#3a2c08,#5c4410);border-bottom:3px solid var(--dourado);padding:22px 16px 18px;}
+header.top .inner{max-width:900px;margin:0 auto;}
+.kicker{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--dourado);font-weight:700;}
+h1{margin:6px 0 4px;font-size:28px;line-height:1.2;}
+.sub{color:#f0dfae;font-size:15px;margin:0;}
+nav.abas{background:var(--console);border-bottom:1px solid var(--borda);position:sticky;top:0;z-index:40;}
+nav.abas .inner{max-width:900px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;padding:0 8px;}
+nav.abas a{display:block;padding:12px 14px;color:var(--suave);text-decoration:none;font-size:14px;
+  font-weight:600;white-space:nowrap;border-bottom:3px solid transparent;}
+nav.abas a.ativo{color:var(--dourado);border-bottom-color:var(--dourado);}
+nav.abas a:hover{color:var(--texto);}
+.painel{background:var(--console2);border:1px solid var(--borda);border-radius:12px;
+  padding:12px 14px;margin:18px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.painel .info{flex:1;min-width:190px;font-size:13px;color:var(--suave);}
+.btn{background:var(--console);color:var(--texto);border:1px solid var(--borda);border-radius:8px;
+  padding:8px 13px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+.btn:hover{border-color:var(--dourado);color:var(--dourado);}
+.btn.prim{background:var(--dourado);color:#2b2005;border-color:var(--dourado);}
+.btn.prim:hover{background:#ffd470;color:#2b2005;}
+.btn.grande{padding:13px 26px;font-size:16px;}
+.barra{height:10px;background:var(--console);border-radius:20px;overflow:hidden;border:1px solid var(--borda);}
+.barra i{display:block;height:100%;background:linear-gradient(90deg,var(--dourado),var(--amarelo));width:0;transition:width .4s;}
+.prog-txt{font-size:13px;color:var(--suave);margin:6px 0 0;}
+.intro{background:var(--console);border:1px solid var(--borda);border-radius:16px;padding:20px;margin:20px 0;}
+.intro h2{margin:0 0 10px;color:var(--dourado);font-size:21px;}
+.intro ul{margin:0;padding-left:20px;}
+.q{background:var(--console);border:1px solid var(--borda);border-radius:16px;padding:18px;margin:18px 0;}
+.q .cab{display:flex;gap:10px;align-items:center;margin-bottom:10px;}
+.q .nq{width:32px;height:32px;border-radius:50%;background:var(--dourado);color:#2b2005;
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex:0 0 auto;}
+.q .enun{margin:0;font-size:17px;}
+.q .frase{background:var(--preto);border-left:4px solid var(--ciano);border-radius:0 8px 8px 0;
+  padding:9px 13px;margin:10px 0;font-size:16px;font-style:italic;}
+.alt{display:flex;gap:10px;align-items:flex-start;background:var(--preto);border:1px solid var(--borda);
+  border-radius:10px;padding:11px 13px;margin-bottom:8px;cursor:pointer;font-size:16px;}
+.alt:hover{border-color:var(--dourado);}
+.alt.marcada{border-color:var(--dourado);background:#2a2410;}
+.alt .letra{font-weight:800;color:var(--dourado);flex:0 0 auto;}
+.alt.certa{border-color:var(--verde);background:#0f2a1f;}
+.alt.errada{border-color:var(--borda);background:#191c22;opacity:.85;}
+.alt .porque{display:block;font-size:14px;color:var(--suave);margin-top:5px;}
+.alt.certa .porque{color:#9be8c2;}
+.resultado{background:var(--console);border:2px solid var(--dourado);border-radius:16px;padding:24px;margin:22px 0;text-align:center;display:none;}
+.resultado .nota{font-size:46px;font-weight:800;color:var(--dourado);line-height:1.1;}
+.codigo{font-family:'Courier New',monospace;font-size:27px;font-weight:800;letter-spacing:.14em;
+  color:var(--verde);background:var(--preto);border:2px dashed var(--verde);border-radius:12px;
+  padding:12px;margin:14px auto;max-width:280px;}
+.liberar{background:var(--console2);border:1px solid var(--borda);border-radius:12px;padding:16px;margin:18px 0;}
+.liberar input{background:var(--preto);border:1px solid var(--borda);color:var(--texto);border-radius:8px;
+  padding:10px;font-family:'Courier New',monospace;font-size:17px;letter-spacing:.1em;width:180px;text-transform:uppercase;}
+.liberar input:focus{outline:none;border-color:var(--verde);}
+.msg{font-size:14px;margin:8px 0 0;display:none;}
+.msg.ruim{color:#ff9b96;} .msg.bom{color:var(--verde);}
+.erro-msg{color:#ff9b96;font-size:15px;margin:10px 0;display:none;}
+footer{text-align:center;color:var(--suave);font-size:13px;padding:30px 16px;}
+.modal-fundo{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;
+  justify-content:center;z-index:100;padding:16px;}
+.modal-fundo.aberto{display:flex;}
+.modal{background:var(--console);border:1px solid var(--borda);border-radius:16px;max-width:430px;width:100%;padding:22px;}
+.modal h3{margin:0 0 10px;font-size:19px;color:var(--dourado);}
+.modal p{margin:0 0 16px;font-size:15px;}
+.modal .acoes{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;}
+@media(max-width:600px){h1{font-size:23px;}body{font-size:16px;}}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="inner">
+  <div class="kicker">Estúdio de Vozes · 8º ano · Português</div>
+  <h1>🎯 Quiz</h1>
+  <p class="sub">18 questões para testar o que ficou da Leitura Guiada</p>
+</div></header>
+
+<nav class="abas"><div class="inner">
+  <a href="index.html">🏠 Início</a>
+  <a href="leitura-guiada.html">📖 Leitura Guiada</a>
+  <a href="quiz.html" class="ativo">🎯 Quiz</a>
+  <a href="resumo.html">🗺️ Resumo</a>
+  <a href="simulado.html">📝 Simulado</a>
+</div></nav>
+
+<div class="wrap">
+
+  <div class="painel">
+    <div class="info" id="info-salvo">Nada salvo ainda.</div>
+    <button class="btn" id="b-exportar">📥 Exportar</button>
+    <button class="btn" id="b-importar">📤 Importar</button>
+    <button class="btn" id="b-zerar">🗑️ Zerar tudo</button>
+    <input type="file" id="arq-importar" accept="application/json" style="display:none">
+  </div>
+
+  <div class="intro">
+    <h2>Como funciona</h2>
+    <ul>
+      <li>São <b>18 questões</b> de múltipla escolha, todas sobre vozes verbais.</li>
+      <li>Marque uma alternativa por questão. Dá para trocar antes de entregar.</li>
+      <li>No fim aparece a sua nota e um <b>código MED</b> — é ele que libera o gabarito comentado.</li>
+      <li>Tudo fica salvo sozinho: pode fechar e voltar depois.</li>
+    </ul>
+  </div>
+
+  <div class="barra"><i id="barra-i"></i></div>
+  <p class="prog-txt" id="prog-txt">0 de 18 respondidas.</p>
+
+  <div id="questoes"></div>
+
+  <p class="erro-msg" id="erro-geral"></p>
+  <div style="text-align:center;margin:26px 0;">
+    <button class="btn prim grande" id="b-entregar">✅ Entregar e ver a nota</button>
+  </div>
+
+  <div class="resultado" id="resultado">
+    <div class="nota" id="nota">0/18</div>
+    <p id="frase-nota" style="margin:6px 0 0;"></p>
+    <p style="margin:18px 0 4px;font-size:14px;color:var(--suave);">Código para mostrar para a sua mãe:</p>
+    <div class="codigo" id="codigo">MED-00-XX</div>
+    <p style="font-size:14px;color:var(--suave);margin:0;">Com esse código dá para abrir o gabarito comentado aqui embaixo.</p>
+  </div>
+
+  <div class="liberar" id="liberar" style="display:none;">
+    <b>🔓 Abrir o gabarito comentado</b>
+    <p style="font-size:15px;margin:6px 0 10px;">Digite o código MED que apareceu acima:</p>
+    <input type="text" id="in-codigo" placeholder="MED-00-XX" maxlength="9">
+    <button class="btn prim" id="b-liberar">Abrir</button>
+    <p class="msg" id="msg-codigo"></p>
+  </div>
+
+  <div class="intro" id="proximo" style="display:none;text-align:center;">
+    <h2 style="color:var(--ciano);">Já viu onde errou?</h2>
+    <p style="margin:0 0 14px;">Agora o Resumo serve para fechar exatamente esses buracos.</p>
+    <a href="resumo.html" class="btn prim" style="display:inline-block;text-decoration:none;padding:12px 24px;">🗺️ Ir para o Resumo →</a>
+  </div>
+
+</div>
+
+<footer>Estúdio de Vozes · material de estudo do jovem aprendiz</footer>
+
+<div class="modal-fundo" id="modal-fundo"><div class="modal">
+  <h3 id="modal-t">Confirmar</h3><p id="modal-p">Tem certeza?</p>
+  <div class="acoes"><button class="btn" id="modal-nao">Cancelar</button>
+  <button class="btn prim" id="modal-sim">Confirmar</button></div>
+</div></div>
+
+<script>
+/* ===== ARMAZENAMENTO SEGURO ===== */
+var MEM={};
+var LS=(function(){ try{ var k='__t'+Date.now(); localStorage.setItem(k,'1'); localStorage.removeItem(k); return localStorage; }
+  catch(e){ return { getItem:function(k){return MEM[k]===undefined?null:MEM[k];},
+    setItem:function(k,v){MEM[k]=String(v);}, removeItem:function(k){delete MEM[k];} }; } })();
+var CHAVE='vv8_quiz';
+var estado={ resp:{}, entregue:false, acertos:null, codigo:null, liberado:false, quando:null };
+
+function carregar(){ try{ var r=LS.getItem(CHAVE); if(r){ var o=JSON.parse(r); if(o&&o.resp) estado=o; } }catch(e){} }
+function salvar(){ estado.quando=new Date().toISOString();
+  try{ LS.setItem(CHAVE, JSON.stringify(estado)); }catch(e){} pintarInfo(); }
+function pintarInfo(){ var el=document.getElementById('info-salvo');
+  if(!estado.quando){ el.textContent='Nada salvo ainda.'; return; }
+  var d=new Date(estado.quando), p=function(n){return (n<10?'0':'')+n;};
+  el.textContent='💾 Salvo automaticamente em '+p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear()+' às '+p(d.getHours())+':'+p(d.getMinutes()); }
+
+/* ===== MODAL ===== */
+var modalAcao=null;
+function abrirModal(t,p,acao,txt){ document.getElementById('modal-t').textContent=t;
+  document.getElementById('modal-p').textContent=p;
+  document.getElementById('modal-sim').textContent=txt||'Confirmar';
+  document.getElementById('modal-nao').style.display=acao?'':'none';
+  modalAcao=acao; document.getElementById('modal-fundo').classList.add('aberto'); }
+function fecharModal(){ document.getElementById('modal-fundo').classList.remove('aberto'); modalAcao=null; }
+document.getElementById('modal-nao').onclick=fecharModal;
+document.getElementById('modal-sim').onclick=function(){ var a=modalAcao; fecharModal(); if(a) a(); };
+
+/* ===== 18 QUESTÕES ===== */
+var QUESTOES=[
+{ enun:'Leia a frase e diga em que voz verbal ela está:', frase:'O homem cultivou o terreno.',
+  alts:[
+   {t:'Voz ativa', ok:true,  w:'Certo. O sujeito "o homem" é quem praticou a ação de cultivar, então ele é agente.'},
+   {t:'Voz passiva analítica', ok:false, w:'Não. Na passiva analítica apareceria o verbo ser mais o particípio: "O terreno foi cultivado".'},
+   {t:'Voz passiva sintética', ok:false, w:'Não. A passiva sintética precisaria do pronome se junto ao verbo: "Cultivou-se o terreno".'},
+   {t:'Voz reflexiva', ok:false, w:'Não. Na reflexiva o sujeito receberia a própria ação, e aqui quem recebe é o terreno.'} ] },
+
+{ enun:'Qual é o sujeito da frase abaixo e como ele se classifica?', frase:'O aluno foi visto na entrada da escola.',
+  alts:[
+   {t:'"O aluno" — sujeito paciente', ok:true, w:'Certo. "O aluno" não praticou a ação: ele foi visto, ou seja, recebeu a ação.'},
+   {t:'"O aluno" — sujeito agente', ok:false, w:'Não. Agente é quem pratica, e aqui o aluno apenas recebeu a ação de ser visto.'},
+   {t:'"Na entrada da escola" — sujeito paciente', ok:false, w:'Não. "Na entrada da escola" é uma expressão de lugar, não é sujeito.'},
+   {t:'A frase não tem sujeito', ok:false, w:'Não. O sujeito existe e está bem visível: "o aluno".'} ] },
+
+{ enun:'Identifique o agente da passiva:', frase:'As notícias foram trazidas pelos mensageiros.',
+  alts:[
+   {t:'pelos mensageiros', ok:true, w:'Certo. É quem praticou a ação, introduzido pela preposição por (aqui contraída em "pelos").'},
+   {t:'as notícias', ok:false, w:'Não. "As notícias" é o sujeito paciente, quem recebeu a ação.'},
+   {t:'foram trazidas', ok:false, w:'Não. Essa é a locução verbal da passiva: verbo ser mais particípio.'},
+   {t:'A frase não tem agente da passiva', ok:false, w:'Não. Ele está no fim da frase, depois da preposição por.'} ] },
+
+{ enun:'Passe para a voz passiva, mantendo o tempo verbal:', frase:'A cabeleireira finalizou o penteado.',
+  alts:[
+   {t:'O penteado foi finalizado pela cabeleireira.', ok:true, w:'Certo. "Finalizou" está no pretérito perfeito, então o verbo ser também vai para o pretérito perfeito: "foi".'},
+   {t:'O penteado é finalizado pela cabeleireira.', ok:false, w:'Não. Aqui o tempo mudou para o presente, e a regra é manter o tempo original.'},
+   {t:'O penteado será finalizado pela cabeleireira.', ok:false, w:'Não. "Será" é futuro, e a frase original está no passado.'},
+   {t:'Finaliza-se o penteado pela cabeleireira.', ok:false, w:'Não. Além de mudar o tempo, a passiva sintética não aceita agente da passiva expresso.'} ] },
+
+{ enun:'Qual destas frases NÃO pode ser passada para a voz passiva?', frase:'',
+  alts:[
+   {t:'Ela assistiu ao filme.', ok:true, w:'Certo. "Assistir a" é transitivo indireto, então "ao filme" é objeto indireto e não pode virar sujeito da passiva.'},
+   {t:'Ela viu o filme.', ok:false, w:'Esta pode: "O filme foi visto por ela". "O filme" é objeto direto.'},
+   {t:'Os auditores anotaram o relatório.', ok:false, w:'Esta pode: "O relatório foi anotado pelos auditores".'},
+   {t:'Felipe plantou flores.', ok:false, w:'Esta pode: "Flores foram plantadas por Felipe".'} ] },
+
+{ enun:'Em que voz está a frase abaixo?', frase:'Vende-se um apartamento na praia.',
+  alts:[
+   {t:'Voz passiva sintética', ok:true, w:'Certo. É verbo transitivo direto na 3ª pessoa mais o se apassivador, e equivale a "Um apartamento é vendido".'},
+   {t:'Voz passiva analítica', ok:false, w:'Não. A analítica usa o verbo ser mais particípio, que não aparecem aqui.'},
+   {t:'Voz reflexiva', ok:false, w:'Não. O apartamento não vende a si mesmo; ele é vendido por alguém.'},
+   {t:'Voz ativa', ok:false, w:'Não. O sujeito "um apartamento" recebe a ação, não a pratica.'} ] },
+
+{ enun:'Uma placa traz a frase abaixo. Qual é a forma correta?', frase:'Aluga-se apartamentos na praia.',
+  alts:[
+   {t:'Alugam-se apartamentos na praia.', ok:true, w:'Certo. "Apartamentos" é o sujeito da frase e está no plural, então o verbo vai para o plural.'},
+   {t:'A frase já está correta.', ok:false, w:'Não. O verbo precisa concordar com "apartamentos", que é o sujeito e está no plural.'},
+   {t:'Alugam-se apartamento na praia.', ok:false, w:'Não. Aqui o erro se inverteu: o verbo ficou no plural e o sujeito no singular.'},
+   {t:'Aluga-se de apartamentos na praia.', ok:false, w:'Não. A preposição de não cabe aqui, porque alugar é transitivo direto.'} ] },
+
+{ enun:'Classifique o se da frase:', frase:'Precisa-se de vendedores experientes.',
+  alts:[
+   {t:'Índice de indeterminação do sujeito', ok:true, w:'Certo. "Precisar de" é transitivo indireto, a frase não tem sujeito e o verbo fica na 3ª pessoa do singular.'},
+   {t:'Partícula apassivadora', ok:false, w:'Não. Não dá para dizer "vendedores são precisados": o verbo tem objeto indireto, não direto.'},
+   {t:'Pronome reflexivo', ok:false, w:'Não. Não cabe "a si mesmo" nem "um ao outro" aqui.'},
+   {t:'Conjunção condicional', ok:false, w:'Não. O se condicional seria o de "Se chover, não vou", que introduz uma condição.'} ] },
+
+{ enun:'Classifique o se da frase:', frase:'Consertam-se computadores e celulares.',
+  alts:[
+   {t:'Partícula apassivadora', ok:true, w:'Certo. Dá para dizer "Computadores e celulares são consertados": é voz passiva sintética.'},
+   {t:'Índice de indeterminação do sujeito', ok:false, w:'Não. Aqui existe sujeito ("computadores e celulares"), tanto que o verbo está no plural.'},
+   {t:'Pronome reflexivo', ok:false, w:'Não. Os computadores não consertam a si mesmos.'},
+   {t:'Parte integrante do verbo', ok:false, w:'Não. Esse caso seria o de verbos como "queixar-se", que não existem sem o pronome.'} ] },
+
+{ enun:'Classifique o se da frase:', frase:'A moça admirava-se ao espelho.',
+  alts:[
+   {t:'Pronome reflexivo', ok:true, w:'Certo. Cabe "a si mesma": a moça admirava a si própria, então é voz reflexiva.'},
+   {t:'Partícula apassivadora', ok:false, w:'Não. Não faz sentido dizer "a moça era admirada" nesse contexto, em que ela se olha no espelho.'},
+   {t:'Índice de indeterminação do sujeito', ok:false, w:'Não. O sujeito está claro na frase: "a moça".'},
+   {t:'Conjunção integrante', ok:false, w:'Não. A conjunção integrante aparece em frases como "Não sei se ele virá".'} ] },
+
+{ enun:'Leia a frase e escolha a classificação correta:', frase:'Maria e João amam-se desde o colégio.',
+  alts:[
+   {t:'Voz reflexiva recíproca — um ama o outro', ok:true, w:'Certo. Cabe o teste do "um ao outro". A recíproca é um tipo de voz reflexiva.'},
+   {t:'Voz reflexiva pura — cada um ama a si mesmo', ok:false, w:'Não. O sentido da frase é que um ama o outro, e não que cada um ama a si próprio.'},
+   {t:'Voz passiva sintética', ok:false, w:'Não. "Amar" aqui não tem sujeito paciente: os dois praticam e recebem a ação.'},
+   {t:'Voz ativa comum, sem pronome reflexivo', ok:false, w:'Não. O pronome "se" está na frase e é justamente o que marca a reflexividade.'} ] },
+
+{ enun:'Qual é a fórmula da voz passiva analítica?', frase:'',
+  alts:[
+   {t:'sujeito paciente + verbo SER + particípio do verbo principal', ok:true, w:'Certo. É a fórmula de "O bolo foi feito pela mamãe".'},
+   {t:'verbo transitivo direto na 3ª pessoa + SE + sujeito paciente', ok:false, w:'Essa é a fórmula da voz passiva SINTÉTICA, como em "Vende-se um apartamento".'},
+   {t:'sujeito agente + verbo + objeto direto', ok:false, w:'Essa é a estrutura da voz ativa.'},
+   {t:'sujeito + verbo + pronome reflexivo', ok:false, w:'Essa é a estrutura da voz reflexiva.'} ] },
+
+{ enun:'Passe para a voz ativa:', frase:'O terreno foi cultivado pelo homem.',
+  alts:[
+   {t:'O homem cultivou o terreno.', ok:true, w:'Certo. O agente da passiva virou sujeito, o sujeito paciente virou objeto direto e o tempo continuou no passado.'},
+   {t:'O homem cultiva o terreno.', ok:false, w:'Não. O tempo mudou para o presente, e ele tem que ser mantido no passado.'},
+   {t:'O terreno cultivou o homem.', ok:false, w:'Não. Isso inverte o sentido da frase: quem cultivou foi o homem.'},
+   {t:'Cultiva-se o terreno pelo homem.', ok:false, w:'Não. Além de mudar o tempo, a passiva sintética não aceita agente da passiva expresso.'} ] },
+
+{ enun:'Sobre a frase abaixo, é correto afirmar que:', frase:'O relatório foi entregue ontem.',
+  alts:[
+   {t:'Está na voz passiva, com o agente da passiva omitido.', ok:true, w:'Certo. O agente pode ser omitido quando não se sabe ou não importa quem fez, e a voz continua passiva.'},
+   {t:'Não está na voz passiva, porque falta o agente.', ok:false, w:'Não. O agente é opcional; o que define a passiva é o sujeito receber a ação.'},
+   {t:'Está na voz ativa, porque o relatório é o sujeito.', ok:false, w:'Não. Ser sujeito não basta: aqui o relatório recebe a ação, então é sujeito paciente.'},
+   {t:'Está na voz reflexiva.', ok:false, w:'Não. O relatório não entregou a si mesmo.'} ] },
+
+{ enun:'Complete corretamente a frase na voz passiva:', frase:'As casas _______ pela construtora no ano passado.',
+  alts:[
+   {t:'foram construídas', ok:true, w:'Certo. O verbo ser no plural e no passado, e o particípio concordando com "as casas".'},
+   {t:'foi construída', ok:false, w:'Não. "As casas" está no plural, então o verbo ser e o particípio também precisam estar no plural.'},
+   {t:'foram construído', ok:false, w:'Não. O particípio da passiva concorda com o sujeito: "construídas".'},
+   {t:'serão construídas', ok:false, w:'Não. "No ano passado" indica passado, e "serão" é futuro.'} ] },
+
+{ enun:'Em que voz verbal está a frase abaixo?', frase:'A secretária telefonou aos clientes.',
+  alts:[
+   {t:'Voz ativa, mesmo sem objeto direto', ok:true, w:'Certo. A voz ativa depende de o sujeito praticar a ação, e não de o verbo ter objeto direto.'},
+   {t:'Voz passiva, porque o verbo é transitivo indireto', ok:false, w:'Não. Verbo transitivo indireto não forma voz passiva, e o sujeito aqui é quem praticou a ação.'},
+   {t:'Voz reflexiva', ok:false, w:'Não. Não existe pronome reflexivo na frase, nem a ação volta para a secretária.'},
+   {t:'Não tem voz verbal definida', ok:false, w:'Não. Toda frase com verbo tem uma voz; esta está na ativa.'} ] },
+
+{ enun:'Classifique o se da frase:', frase:'Trata-se de um erro muito grave.',
+  alts:[
+   {t:'Índice de indeterminação do sujeito', ok:true, w:'Certo. "Tratar de" é transitivo indireto, então não há sujeito e o verbo fica no singular. É sempre esse o caso de "trata-se de".'},
+   {t:'Partícula apassivadora', ok:false, w:'Não. Não existe "um erro é tratado" com esse sentido; o verbo tem objeto indireto.'},
+   {t:'Pronome reflexivo', ok:false, w:'Não. Não cabe "a si mesmo" aqui.'},
+   {t:'Pronome apassivador de verbo intransitivo', ok:false, w:'Não. Verbo intransitivo nunca forma passiva, e essa classificação não existe.'} ] },
+
+{ enun:'Qual transformação mantém corretamente o tempo verbal?', frase:'Os cientistas descobrirão a cura.',
+  alts:[
+   {t:'A cura será descoberta pelos cientistas.', ok:true, w:'Certo. "Descobrirão" é futuro, então o verbo ser também vai para o futuro: "será".'},
+   {t:'A cura foi descoberta pelos cientistas.', ok:false, w:'Não. "Foi" é passado, e a frase original está no futuro.'},
+   {t:'A cura é descoberta pelos cientistas.', ok:false, w:'Não. "É" é presente, e a frase original está no futuro.'},
+   {t:'A cura seria descoberta pelos cientistas.', ok:false, w:'Não. "Seria" é futuro do pretérito, um tempo diferente do futuro do presente.'} ] }
+];
+
+/* ===== EMBARALHAMENTO COM SEMENTE FIXA (a certa é guardada pelo CONTEÚDO) ===== */
+function sorteador(semente){ var s=semente; return function(){ s=(s*1103515245+12345)%2147483648; return s/2147483648; }; }
+QUESTOES.forEach(function(q,i){
+  var r = sorteador(1000 + i*1000);
+  var copia = q.alts.slice();
+  for(var k=copia.length-1;k>0;k--){ var j=Math.floor(r()*(k+1)); var t=copia[k]; copia[k]=copia[j]; copia[j]=t; }
+  q.ordem = copia;
+  q.certa = -1;
+  for(var n=0;n<copia.length;n++) if(copia[n].ok) q.certa = n;   // guardada pelo objeto, nunca pela letra
+});
+
+var LETRAS=['a','b','c','d'];
+
+/* ===== MONTAGEM ===== */
+function montar(){
+  var h='';
+  QUESTOES.forEach(function(q,i){
+    h += '<div class="q" id="q-'+i+'"><div class="cab"><div class="nq">'+(i+1)+'</div>'+
+         '<p class="enun">'+q.enun+'</p></div>';
+    if(q.frase) h += '<div class="frase">'+q.frase+'</div>';
+    q.ordem.forEach(function(a,n){
+      h += '<div class="alt" id="alt-'+i+'-'+n+'" data-i="'+i+'" data-n="'+n+'">'+
+           '<span class="letra">'+LETRAS[n]+')</span><span class="txt">'+a.t+
+           '<span class="porque" id="pq-'+i+'-'+n+'" style="display:none;">'+a.w+'</span></span></div>';
+    });
+    h += '</div>';
+  });
+  document.getElementById('questoes').innerHTML = h;
+
+  var alts = document.querySelectorAll('.alt');
+  for(var i=0;i<alts.length;i++){
+    alts[i].onclick = function(){
+      if(estado.entregue) return;
+      var qi=+this.dataset.i, an=+this.dataset.n;
+      estado.resp[qi]=an; salvar(); pintarMarcadas(); pintarProgresso();
+    };
+  }
+  pintarMarcadas(); pintarProgresso();
+  if(estado.entregue) mostrarResultado(false);
+  if(estado.liberado) mostrarGabarito();
+}
+function pintarMarcadas(){
+  QUESTOES.forEach(function(q,i){
+    q.ordem.forEach(function(a,n){
+      var el=document.getElementById('alt-'+i+'-'+n); if(!el) return;
+      el.classList.toggle('marcada', estado.resp[i]===n && !estado.entregue);
+    });
+  });
+}
+function pintarProgresso(){
+  var n=0; for(var i=0;i<QUESTOES.length;i++) if(estado.resp[i]!==undefined) n++;
+  document.getElementById('barra-i').style.width=Math.round(n/QUESTOES.length*100)+'%';
+  document.getElementById('prog-txt').textContent=n+' de '+QUESTOES.length+' respondidas.';
+}
+
+/* ===== CÓDIGO MED ===== */
+function gerarCodigo(acertos){
+  var letras='ABCDEFGHJKLMNPQRSTUVWXYZ'; // sem I e sem O
+  var yy = letras[Math.floor(Math.random()*letras.length)] + letras[Math.floor(Math.random()*letras.length)];
+  var xx = (acertos<10?'0':'')+acertos;
+  return 'MED-'+xx+'-'+yy;
+}
+
+document.getElementById('b-entregar').onclick = function(){
+  if(estado.entregue){ document.getElementById('resultado').scrollIntoView({behavior:'smooth'}); return; }
+  var faltam=[];
+  for(var i=0;i<QUESTOES.length;i++) if(estado.resp[i]===undefined) faltam.push(i+1);
+  var err=document.getElementById('erro-geral');
+  if(faltam.length){
+    err.textContent='Ainda falta responder: '+faltam.join(', ')+'.';
+    err.style.display='block';
+    document.getElementById('q-'+(faltam[0]-1)).scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  err.style.display='none';
+  abrirModal('Entregar o quiz?','Depois de entregar não dá mais para trocar as respostas.', function(){
+    var acertos=0;
+    for(var i=0;i<QUESTOES.length;i++) if(estado.resp[i]===QUESTOES[i].certa) acertos++;
+    estado.entregue=true; estado.acertos=acertos; estado.codigo=gerarCodigo(acertos);
+    salvar(); mostrarResultado(true);
+  }, 'Entregar');
+};
+
+function mostrarResultado(rolar){
+  var a=estado.acertos;
+  document.getElementById('nota').textContent=a+'/'+QUESTOES.length;
+  var f;
+  if(a>=16) f='Excelente. Essa matéria já está no lugar.';
+  else if(a>=12) f='Bom caminho. Falta afinar alguns pontos.';
+  else if(a>=8) f='Metade no lugar. O Resumo vai fechar o resto.';
+  else f='Tudo bem. O Resumo existe exatamente para isso — vale voltar nele com calma.';
+  document.getElementById('frase-nota').textContent=f;
+  document.getElementById('codigo').textContent=estado.codigo;
+  document.getElementById('resultado').style.display='block';
+  document.getElementById('liberar').style.display='block';
+  document.getElementById('proximo').style.display='block';
+  document.getElementById('b-entregar').textContent='✅ Quiz entregue';
+  if(rolar) document.getElementById('resultado').scrollIntoView({behavior:'smooth'});
+}
+
+document.getElementById('b-liberar').onclick=function(){
+  var v=document.getElementById('in-codigo').value.trim().toUpperCase();
+  var m=document.getElementById('msg-codigo');
+  if(v===estado.codigo){ estado.liberado=true; salvar(); m.className='msg bom';
+    m.textContent='Gabarito aberto. Role para ver o comentário de cada questão.'; m.style.display='block';
+    mostrarGabarito(); }
+  else { m.className='msg ruim'; m.textContent='Esse código não confere. Confira as letras e os números.'; m.style.display='block'; }
+};
+
+function mostrarGabarito(){
+  QUESTOES.forEach(function(q,i){
+    q.ordem.forEach(function(a,n){
+      var el=document.getElementById('alt-'+i+'-'+n); if(!el) return;
+      el.classList.remove('marcada');
+      el.classList.add(a.ok?'certa':'errada');
+      document.getElementById('pq-'+i+'-'+n).style.display='block';
+    });
+    var marcada=estado.resp[i];
+    if(marcada!==undefined && marcada!==q.certa){
+      var el2=document.getElementById('alt-'+i+'-'+marcada);
+      if(el2) el2.querySelector('.letra').textContent = LETRAS[marcada]+') ✗ você marcou esta —';
+    }
+  });
+  document.getElementById('liberar').style.display='none';
+}
+
+/* ===== EXPORTAR / IMPORTAR / ZERAR ===== */
+document.getElementById('b-exportar').onclick=function(){
+  var saida={ material:'quiz', kit:'vozes-verbais-8ano', quando:estado.quando,
+    entregue:estado.entregue, acertos:estado.acertos, total:QUESTOES.length, codigo:estado.codigo, questoes:[] };
+  QUESTOES.forEach(function(q,i){
+    var m=estado.resp[i];
+    saida.questoes.push({ n:i+1, enunciado:q.enun+(q.frase?(' '+q.frase):''),
+      marcada: m===undefined?null:q.ordem[m].t, correta:q.ordem[q.certa].t, acertou: m===q.certa });
+  });
+  var b=new Blob([JSON.stringify(saida,null,2)],{type:'application/json'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='quiz-vozes-verbais.json'; a.click();
+};
+document.getElementById('b-importar').onclick=function(){ document.getElementById('arq-importar').click(); };
+document.getElementById('arq-importar').onchange=function(ev){
+  var f=ev.target.files[0]; if(!f) return; var r=new FileReader();
+  r.onload=function(){ try{ var o=JSON.parse(r.result);
+    if(o&&o.questoes){ estado={resp:{},entregue:!!o.entregue,acertos:o.acertos,codigo:o.codigo||null,liberado:false,quando:o.quando||null};
+      o.questoes.forEach(function(q,i){ if(q.marcada!=null){ QUESTOES[i].ordem.forEach(function(a,n){ if(a.t===q.marcada) estado.resp[i]=n; }); } });
+      salvar(); montar(); abrirModal('Pronto!','As respostas do arquivo foram carregadas.',null,'Fechar'); }
+    else abrirModal('Arquivo estranho','Este arquivo não parece ser o do Quiz.',null,'Fechar');
+  }catch(e){ abrirModal('Não deu certo','Não consegui ler esse arquivo.',null,'Fechar'); } };
+  r.readAsText(f); ev.target.value='';
+};
+document.getElementById('b-zerar').onclick=function(){
+  abrirModal('Apagar tudo?','Todas as respostas deste Quiz serão apagadas. Não dá para desfazer.', function(){
+    estado={resp:{},entregue:false,acertos:null,codigo:null,liberado:false,quando:null};
+    try{ LS.removeItem(CHAVE); }catch(e){}
+    document.getElementById('resultado').style.display='none';
+    document.getElementById('liberar').style.display='none';
+    document.getElementById('proximo').style.display='none';
+    document.getElementById('b-entregar').textContent='✅ Entregar e ver a nota';
+    pintarInfo(); montar();
+  },'Apagar');
+};
+
+carregar(); pintarInfo(); montar();
+</script>
+</body>
+</html>

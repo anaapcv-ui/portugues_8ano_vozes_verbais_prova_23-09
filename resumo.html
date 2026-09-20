@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resumo · Estúdio de Vozes</title>
+<style>
+:root{
+  --preto:#0d0f14; --console:#161a23; --console2:#1e2430; --borda:#2c3444;
+  --texto:#e8ecf4; --suave:#a7b0c2; --dourado:#f3c14b; --vermelho:#e0443e;
+  --verde:#39d98a; --ciano:#4ecdc4; --amarelo:#ffd93d; --roxo:#a78bfa;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--preto);color:var(--texto);
+  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;font-size:17px;line-height:1.7;}
+a{color:var(--dourado);}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px 80px;}
+header.top{background:linear-gradient(135deg,#0a2d2b,#0f4340);border-bottom:3px solid var(--ciano);padding:22px 16px 18px;}
+header.top .inner{max-width:900px;margin:0 auto;}
+.kicker{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--ciano);font-weight:700;}
+h1{margin:6px 0 4px;font-size:28px;line-height:1.2;}
+.sub{color:#bfe9e6;font-size:15px;margin:0;}
+nav.abas{background:var(--console);border-bottom:1px solid var(--borda);position:sticky;top:0;z-index:40;}
+nav.abas .inner{max-width:900px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;padding:0 8px;}
+nav.abas a{display:block;padding:12px 14px;color:var(--suave);text-decoration:none;font-size:14px;
+  font-weight:600;white-space:nowrap;border-bottom:3px solid transparent;}
+nav.abas a.ativo{color:var(--ciano);border-bottom-color:var(--ciano);}
+nav.abas a:hover{color:var(--texto);}
+.painel{background:var(--console2);border:1px solid var(--borda);border-radius:12px;
+  padding:12px 14px;margin:18px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.painel .info{flex:1;min-width:190px;font-size:13px;color:var(--suave);}
+.btn{background:var(--console);color:var(--texto);border:1px solid var(--borda);border-radius:8px;
+  padding:8px 13px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+.btn:hover{border-color:var(--ciano);color:var(--ciano);}
+.btn.prim{background:var(--ciano);color:#062a28;border-color:var(--ciano);}
+.btn.prim:hover{background:#6fe3db;color:#062a28;}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+.secao{background:var(--console);border:1px solid var(--borda);border-radius:16px;padding:20px;margin:20px 0;}
+.secao h2{margin:0 0 6px;font-size:22px;color:var(--ciano);}
+.secao .legenda{color:var(--suave);font-size:14px;margin:0 0 16px;}
+.secao h3{margin:18px 0 8px;font-size:18px;color:var(--dourado);}
+
+/* mapa geral */
+.mapa{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;}
+.no{background:var(--preto);border:1px solid var(--borda);border-radius:12px;padding:14px;}
+.no .tit{font-weight:800;color:var(--dourado);font-size:16px;margin-bottom:4px;}
+.no .cor-a{color:var(--verde);} .no .cor-p{color:var(--amarelo);} .no .cor-r{color:var(--roxo);}
+.no small{color:var(--suave);font-size:14px;display:block;margin-top:5px;}
+
+/* flip cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px;}
+.card3d{perspective:1000px;height:165px;cursor:pointer;}
+.card3d .faces{position:relative;width:100%;height:100%;transition:transform .55s;transform-style:preserve-3d;}
+.card3d.virado .faces{transform:rotateY(180deg);}
+.face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;padding:14px;
+  display:flex;flex-direction:column;justify-content:center;border:1px solid var(--borda);}
+.face.frente{background:var(--console2);text-align:center;}
+.face.frente b{font-size:17px;color:var(--dourado);}
+.face.frente small{color:var(--suave);font-size:13px;margin-top:8px;display:block;}
+.face.verso{background:#0f2a2a;transform:rotateY(180deg);border-color:var(--ciano);font-size:15px;overflow:auto;}
+
+/* máquina */
+.maq{background:var(--preto);border:1px solid var(--borda);border-radius:14px;padding:16px;}
+.maq .entrada{background:var(--console2);border-left:4px solid var(--vermelho);border-radius:0 8px 8px 0;
+  padding:10px 13px;margin-bottom:12px;font-size:17px;}
+.maq .entrada span{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--vermelho);display:block;}
+.maq .saida{background:#0f2a1f;border:1px solid var(--verde);border-radius:10px;padding:14px;
+  font-size:19px;min-height:62px;margin-bottom:12px;}
+.maq .saida span{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--verde);display:block;margin-bottom:4px;}
+.passo{background:var(--console2);border-left:4px solid var(--borda);border-radius:0 8px 8px 0;
+  padding:9px 13px;margin-bottom:7px;font-size:15px;color:var(--suave);}
+.passo.ativo{border-left-color:var(--dourado);color:var(--texto);background:#2a2410;}
+.maq-ctrl{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px;}
+.novo{color:var(--dourado);font-weight:700;}
+
+/* fluxograma SE */
+.fluxo{display:flex;flex-direction:column;gap:10px;}
+.fx{background:var(--preto);border:1px solid var(--borda);border-radius:12px;padding:13px 15px;}
+.fx b{color:var(--dourado);}
+.fx .res{display:inline-block;margin-top:6px;background:var(--console2);border-radius:20px;padding:3px 12px;
+  font-size:14px;font-weight:700;}
+.fx .res.r1{color:var(--roxo);} .fx .res.r2{color:var(--amarelo);} .fx .res.r3{color:var(--ciano);}
+.seta{text-align:center;color:var(--suave);font-size:20px;line-height:1;}
+
+/* jogos */
+.jogo-item{background:var(--preto);border:1px solid var(--borda);border-radius:12px;padding:14px;margin-bottom:10px;}
+.jogo-item .fr{font-size:18px;margin:0 0 10px;font-style:italic;}
+.opts{display:flex;gap:7px;flex-wrap:wrap;}
+.opt{background:var(--console2);border:1px solid var(--borda);color:var(--texto);border-radius:20px;
+  padding:7px 14px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;}
+.opt:hover{border-color:var(--ciano);}
+.opt.acertou{background:var(--verde);color:#06230f;border-color:var(--verde);}
+.opt.errou{background:var(--vermelho);color:#fff;border-color:var(--vermelho);}
+.fb{margin-top:10px;font-size:15px;border-radius:8px;padding:10px 12px;display:none;}
+.fb.bom{background:#0f2a1f;border:1px solid var(--verde);}
+.fb.ruim{background:#3a1a18;border:1px solid var(--vermelho);}
+.placar{font-size:15px;color:var(--suave);margin-top:10px;}
+
+/* placa */
+.placa{background:#f4f1e6;color:#1a1a1a;border:4px solid #8a7a52;border-radius:8px;padding:14px;
+  text-align:center;font-weight:800;font-size:21px;font-family:Georgia,serif;margin-bottom:12px;
+  box-shadow:0 4px 0 #5f5335;}
+
+/* tabela */
+.tabela{width:100%;border-collapse:collapse;margin:0 0 8px;font-size:16px;}
+.tabela th,.tabela td{border:1px solid var(--borda);padding:9px 11px;text-align:left;}
+.tabela th{background:var(--console2);color:var(--dourado);font-size:13px;text-transform:uppercase;letter-spacing:.06em;}
+.tabela td:nth-child(2){color:var(--verde);font-weight:600;}
+
+/* postit e pegadinha */
+.postit{background:#f7e06a;color:#33290a;border-radius:4px;padding:13px 15px;margin-bottom:11px;
+  box-shadow:3px 3px 0 rgba(0,0,0,.35);font-size:16px;transform:rotate(-.5deg);}
+.postit b{color:#7a5c00;}
+.peg{background:var(--preto);border-left:4px solid var(--vermelho);border-radius:0 8px 8px 0;padding:11px 14px;margin-bottom:10px;}
+.peg b{color:var(--vermelho);}
+.glos{background:var(--preto);border:1px solid var(--borda);border-radius:10px;padding:11px 14px;margin-bottom:9px;}
+.glos b{color:var(--dourado);}
+.barra{height:10px;background:var(--console);border-radius:20px;overflow:hidden;border:1px solid var(--borda);}
+.barra i{display:block;height:100%;background:linear-gradient(90deg,var(--ciano),var(--verde));width:0;transition:width .3s;}
+footer{text-align:center;color:var(--suave);font-size:13px;padding:30px 16px;}
+.modal-fundo{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:100;padding:16px;}
+.modal-fundo.aberto{display:flex;}
+.modal{background:var(--console);border:1px solid var(--borda);border-radius:16px;max-width:430px;width:100%;padding:22px;}
+.modal h3{margin:0 0 10px;font-size:19px;color:var(--dourado);}
+.modal p{margin:0 0 16px;font-size:15px;}
+.modal .acoes{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;}
+@media(max-width:600px){h1{font-size:23px;}body{font-size:16px;}.maq .saida{font-size:17px;}}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="inner">
+  <div class="kicker">Estúdio de Vozes · 8º ano · Português</div>
+  <h1>🗺️ Resumo</h1>
+  <p class="sub">A mesa de mixagem: as três receitas, a máquina de transformar e os jogos de treino</p>
+</div></header>
+
+<nav class="abas"><div class="inner">
+  <a href="index.html">🏠 Início</a>
+  <a href="leitura-guiada.html">📖 Leitura Guiada</a>
+  <a href="quiz.html">🎯 Quiz</a>
+  <a href="resumo.html" class="ativo">🗺️ Resumo</a>
+  <a href="simulado.html">📝 Simulado</a>
+</div></nav>
+
+<div class="wrap">
+
+  <div class="painel">
+    <div class="info" id="info-salvo">Nada salvo ainda.</div>
+    <button class="btn" id="b-exportar">📥 Exportar</button>
+    <button class="btn" id="b-importar">📤 Importar</button>
+    <button class="btn" id="b-zerar">🗑️ Zerar tudo</button>
+    <input type="file" id="arq-importar" accept="application/json" style="display:none">
+  </div>
+
+  <div class="barra"><i id="barra-i"></i></div>
+  <p style="font-size:13px;color:var(--suave);margin:6px 0 0;" id="prog-txt">Você já percorreu 0% deste resumo.</p>
+
+  <!-- ===== 1. MAPA ===== -->
+  <section class="secao">
+    <h2>🎚️ O mapa inteiro numa tela</h2>
+    <p class="legenda">Se você só puder olhar uma coisa antes da prova, olhe esta.</p>
+    <div class="mapa">
+      <div class="no"><div class="tit cor-a">1. Voz ativa</div>
+        O sujeito <b>faz</b> a ação.<small>sujeito agente<br>Os mensageiros trouxeram notícias.</small></div>
+      <div class="no"><div class="tit cor-p">2. Voz passiva</div>
+        O sujeito <b>recebe</b> a ação.<small>sujeito paciente<br>As notícias foram trazidas pelos mensageiros.</small></div>
+      <div class="no"><div class="tit cor-r">3. Voz reflexiva</div>
+        O sujeito <b>faz e recebe</b> ao mesmo tempo.<small>sujeito agente e paciente<br>Ela penteou-se com cuidado.</small></div>
+      <div class="no"><div class="tit cor-p">2a. Passiva analítica</div>
+        verbo <b>SER</b> + particípio<small>O bolo foi feito pela mamãe.</small></div>
+      <div class="no"><div class="tit cor-p">2b. Passiva sintética</div>
+        verbo transitivo direto + <b>SE</b><small>Vende-se um apartamento.</small></div>
+      <div class="no"><div class="tit cor-r">3a. Reflexiva recíproca</div>
+        um faz no outro<small>Maria e João amam-se.</small></div>
+    </div>
+    <div class="postit" style="margin-top:16px;"><b>📌 A pergunta que resolve tudo:</b> o sujeito <b>FEZ</b> ou <b>LEVOU</b>?
+      Fez → ativa. Levou → passiva. Fez e levou → reflexiva.</div>
+  </section>
+
+  <!-- ===== 2. MÁQUINA ===== -->
+  <section class="secao">
+    <h2>🔧 Máquina de transformar frases</h2>
+    <p class="legenda">Clique em "Próximo passo" e veja a frase se transformar de ativa em passiva, um pedaço por vez.</p>
+    <div class="maq">
+      <div class="entrada"><span>Entrada (voz ativa)</span><b id="maq-ativa"></b></div>
+      <div class="saida"><span>Saída (voz passiva)</span><span id="maq-saida" style="font-size:19px;color:var(--texto);text-transform:none;letter-spacing:0;">clique em "Próximo passo" para começar</span></div>
+      <div id="maq-passos"></div>
+      <div class="maq-ctrl">
+        <button class="btn prim" id="maq-prox">▶ Próximo passo</button>
+        <button class="btn" id="maq-reset">↺ Recomeçar</button>
+        <button class="btn" id="maq-troca">🔀 Outra frase</button>
+        <span style="font-size:14px;color:var(--suave);" id="maq-tempo"></span>
+      </div>
+    </div>
+    <div class="postit" style="margin-top:14px;"><b>📌 O passo 2 é onde todo mundo erra:</b> o verbo SER entra
+      no <b>mesmo tempo</b> do verbo que estava na ativa. Se era passado, continua passado.</div>
+  </section>
+
+  <!-- ===== 3. TEMPOS ===== -->
+  <section class="secao">
+    <h2>⏱️ Tabela dos tempos verbais</h2>
+    <p class="legenda">Quem carrega o tempo na voz passiva é o verbo SER. O verbo principal fica congelado no particípio.</p>
+    <table class="tabela"><thead><tr><th>Voz ativa</th><th>Voz passiva</th><th>Nome do tempo</th></tr></thead><tbody>
+      <tr><td>faz</td><td>é feito</td><td>presente</td></tr>
+      <tr><td>fez</td><td>foi feito</td><td>pretérito perfeito</td></tr>
+      <tr><td>fazia</td><td>era feito</td><td>pretérito imperfeito</td></tr>
+      <tr><td>fará</td><td>será feito</td><td>futuro do presente</td></tr>
+      <tr><td>faria</td><td>seria feito</td><td>futuro do pretérito</td></tr>
+      <tr><td>tinha feito</td><td>tinha sido feito</td><td>mais-que-perfeito composto</td></tr>
+      <tr><td>está fazendo</td><td>está sendo feito</td><td>presente contínuo</td></tr>
+    </tbody></table>
+    <div class="peg"><b>Pegadinha:</b> "A mamãe fez o bolo" vira <b>"O bolo foi feito pela mamãe"</b>, nunca "é feito".</div>
+  </section>
+
+  <!-- ===== 4. FLUXOGRAMA DO SE ===== -->
+  <section class="secao">
+    <h2>🕹️ O caminho das três perguntas — qual é o SE?</h2>
+    <p class="legenda">Sempre na mesma ordem. Parou numa pergunta com "sim", acabou.</p>
+    <div class="fluxo">
+      <div class="fx"><b>1. Dá para trocar por "a si mesmo" ou "um ao outro"?</b><br>
+        <span class="res r1">→ PRONOME REFLEXIVO</span><br>
+        <small style="color:var(--suave);">Ele se feriu. · Os dois se abraçaram. · Ela levantou-se.</small></div>
+      <div class="seta">▼ se não</div>
+      <div class="fx"><b>2. Dá para virar "é vendido" / "são alugados"?</b><br>
+        <span class="res r2">→ PARTÍCULA APASSIVADORA</span> <span style="color:var(--suave);font-size:14px;">(voz passiva sintética)</span><br>
+        <small style="color:var(--suave);">Alugam-se salas. = Salas são alugadas. · Fez-se o bolo. = O bolo foi feito.</small></div>
+      <div class="seta">▼ se não</div>
+      <div class="fx"><b>3. Sobrou? Então é o terceiro caso.</b><br>
+        <span class="res r3">→ ÍNDICE DE INDETERMINAÇÃO DO SUJEITO</span><br>
+        <small style="color:var(--suave);">Precisa-se de vendedores. · Vive-se bem aqui. · Trata-se de um erro. · Necessita-se de professores.</small></div>
+    </div>
+    <div class="postit" style="margin-top:16px;"><b>📌 Como reconhecer o caso 3 de longe:</b> o verbo <b>não</b> é transitivo direto
+      (vem com preposição, ou não tem complemento nenhum), a frase <b>não tem sujeito</b>, e por isso o verbo fica
+      <b>sempre na 3ª pessoa do singular</b>.</div>
+  </section>
+
+  <!-- ===== 5. JOGO DETECTOR DO SE ===== -->
+  <section class="secao">
+    <h2>🎮 Detector do SE</h2>
+    <p class="legenda">Oito frases. Escolha o disfarce certo e veja na hora por que acertou ou errou.</p>
+    <div id="jogo-se"></div>
+    <p class="placar" id="placar-se"></p>
+  </section>
+
+  <!-- ===== 6. JOGO PLACAS ===== -->
+  <section class="secao">
+    <h2>🪧 Placas de rua</h2>
+    <p class="legenda">A concordância da passiva sintética é a pegadinha número 1. Diga se a placa está certa ou errada.</p>
+    <div id="jogo-placas"></div>
+    <p class="placar" id="placar-placas"></p>
+  </section>
+
+  <!-- ===== 7. FLIP CARDS ===== -->
+  <section class="secao">
+    <h2>🃏 Cartas de memória</h2>
+    <p class="legenda">Tente responder de cabeça antes de virar a carta.</p>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <!-- ===== 8. PEGADINHAS ===== -->
+  <section class="secao">
+    <h2>⚠️ As 10 pegadinhas</h2>
+    <div id="pegadinhas"></div>
+  </section>
+
+  <!-- ===== 9. GLOSSÁRIO ===== -->
+  <section class="secao">
+    <h2>📔 Glossário</h2>
+    <div id="glossario"></div>
+  </section>
+
+  <section class="secao" style="text-align:center;">
+    <h2 style="color:var(--vermelho);">Pronto para valer?</h2>
+    <p>O Simulado tem 28 questões no formato da prova, com somatório, números romanos e discursiva.</p>
+    <a href="simulado.html" class="btn prim" style="display:inline-block;text-decoration:none;padding:12px 24px;">📝 Ir para o Simulado →</a>
+  </section>
+
+</div>
+
+<footer>Estúdio de Vozes · material de estudo do jovem aprendiz</footer>
+
+<div class="modal-fundo" id="modal-fundo"><div class="modal">
+  <h3 id="modal-t">Confirmar</h3><p id="modal-p">Tem certeza?</p>
+  <div class="acoes"><button class="btn" id="modal-nao">Cancelar</button>
+  <button class="btn prim" id="modal-sim">Confirmar</button></div>
+</div></div>
+
+<script>
+/* ===== ARMAZENAMENTO SEGURO ===== */
+var MEM={};
+var LS=(function(){ try{ var k='__t'+Date.now(); localStorage.setItem(k,'1'); localStorage.removeItem(k); return localStorage; }
+  catch(e){ return { getItem:function(k){return MEM[k]===undefined?null:MEM[k];},
+    setItem:function(k,v){MEM[k]=String(v);}, removeItem:function(k){delete MEM[k];} }; } })();
+var CHAVE='vv8_resumo';
+var estado={ rolagem:0, se:{}, placas:{}, viradas:{}, quando:null };
+function carregar(){ try{ var r=LS.getItem(CHAVE); if(r){ var o=JSON.parse(r); if(o) estado=Object.assign(estado,o); } }catch(e){} }
+function salvar(){ estado.quando=new Date().toISOString();
+  try{ LS.setItem(CHAVE, JSON.stringify(estado)); }catch(e){} pintarInfo(); }
+function pintarInfo(){ var el=document.getElementById('info-salvo');
+  if(!estado.quando){ el.textContent='Nada salvo ainda.'; return; }
+  var d=new Date(estado.quando), p=function(n){return (n<10?'0':'')+n;};
+  el.textContent='💾 Salvo automaticamente em '+p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear()+' às '+p(d.getHours())+':'+p(d.getMinutes()); }
+
+var modalAcao=null;
+function abrirModal(t,p,acao,txt){ document.getElementById('modal-t').textContent=t;
+  document.getElementById('modal-p').textContent=p; document.getElementById('modal-sim').textContent=txt||'Confirmar';
+  document.getElementById('modal-nao').style.display=acao?'':'none';
+  modalAcao=acao; document.getElementById('modal-fundo').classList.add('aberto'); }
+function fecharModal(){ document.getElementById('modal-fundo').classList.remove('aberto'); modalAcao=null; }
+document.getElementById('modal-nao').onclick=fecharModal;
+document.getElementById('modal-sim').onclick=function(){ var a=modalAcao; fecharModal(); if(a) a(); };
+
+/* ===== ROLAGEM MÁXIMA ===== */
+function medirRolagem(){
+  var alt=document.documentElement.scrollHeight - window.innerHeight;
+  var pct = alt<=0 ? 100 : Math.round((window.scrollY/alt)*100);
+  if(pct>100) pct=100; if(pct<0) pct=0;
+  if(pct>estado.rolagem){ estado.rolagem=pct; salvar(); }
+  document.getElementById('barra-i').style.width=estado.rolagem+'%';
+  document.getElementById('prog-txt').textContent='Você já percorreu '+estado.rolagem+'% deste resumo.';
+}
+window.addEventListener('scroll', medirRolagem);
+
+/* ===== MÁQUINA DE TRANSFORMAR ===== */
+var MAQUINA=[
+ { ativa:'Hérmia ama Lisandro.', tempo:'presente',
+   saidas:['<span class="novo">Lisandro</span> ...',
+           '<span class="novo">Lisandro é</span> ...',
+           '<span class="novo">Lisandro é amado</span> ...',
+           '<span class="novo">Lisandro é amado por Hérmia.</span>'],
+   passos:['1. O objeto direto "Lisandro" vai para a frente e vira sujeito.',
+           '2. Entra o verbo SER no mesmo tempo de "ama" (presente) → "é".',
+           '3. O verbo "amar" vira particípio → "amado".',
+           '4. O sujeito antigo "Hérmia" vai para o fim com "por" → agente da passiva.'] },
+ { ativa:'Os auditores anotaram o relatório.', tempo:'pretérito perfeito',
+   saidas:['<span class="novo">O relatório</span> ...',
+           '<span class="novo">O relatório foi</span> ...',
+           '<span class="novo">O relatório foi anotado</span> ...',
+           '<span class="novo">O relatório foi anotado pelos auditores.</span>'],
+   passos:['1. O objeto direto "o relatório" vira sujeito.',
+           '2. Entra SER no pretérito perfeito, igual a "anotaram" → "foi".',
+           '3. "Anotar" vira particípio → "anotado".',
+           '4. "Os auditores" vai para o fim com "por" + "os" = "pelos".'] },
+ { ativa:'Ele quebrará o feitiço.', tempo:'futuro do presente',
+   saidas:['<span class="novo">O feitiço</span> ...',
+           '<span class="novo">O feitiço será</span> ...',
+           '<span class="novo">O feitiço será quebrado</span> ...',
+           '<span class="novo">O feitiço será quebrado por ele.</span>'],
+   passos:['1. O objeto direto "o feitiço" vira sujeito.',
+           '2. "Quebrará" é futuro, então o SER também vai para o futuro → "será".',
+           '3. "Quebrar" vira particípio → "quebrado".',
+           '4. "Ele" vai para o fim com "por".'] },
+ { ativa:'O juiz anulava as provas.', tempo:'pretérito imperfeito',
+   saidas:['<span class="novo">As provas</span> ...',
+           '<span class="novo">As provas eram</span> ...',
+           '<span class="novo">As provas eram anuladas</span> ...',
+           '<span class="novo">As provas eram anuladas pelo juiz.</span>'],
+   passos:['1. O objeto direto "as provas" vira sujeito (está no plural).',
+           '2. "Anulava" é pretérito imperfeito, então o SER vira "eram" (plural, para concordar).',
+           '3. "Anular" vira particípio → "anuladas", concordando com "as provas".',
+           '4. "O juiz" vai para o fim com "por" + "o" = "pelo".'] }
+];
+var maqAtual=0, maqPasso=0;
+function pintarMaquina(){
+  var m=MAQUINA[maqAtual];
+  document.getElementById('maq-ativa').textContent=m.ativa;
+  document.getElementById('maq-tempo').textContent='verbo no '+m.tempo;
+  document.getElementById('maq-saida').innerHTML = maqPasso===0
+    ? '<span style="color:var(--suave);">clique em "Próximo passo" para começar</span>'
+    : m.saidas[maqPasso-1];
+  var h='';
+  m.passos.forEach(function(p,i){ h+='<div class="passo'+(i<maqPasso?' ativo':'')+'">'+p+'</div>'; });
+  document.getElementById('maq-passos').innerHTML=h;
+  document.getElementById('maq-prox').disabled = maqPasso>=4;
+  document.getElementById('maq-prox').textContent = maqPasso>=4 ? '✔ Transformação completa' : '▶ Próximo passo';
+}
+document.getElementById('maq-prox').onclick=function(){ if(maqPasso<4){ maqPasso++; pintarMaquina(); } };
+document.getElementById('maq-reset').onclick=function(){ maqPasso=0; pintarMaquina(); };
+document.getElementById('maq-troca').onclick=function(){ maqAtual=(maqAtual+1)%MAQUINA.length; maqPasso=0; pintarMaquina(); };
+
+/* ===== JOGO: DETECTOR DO SE ===== */
+var TIPOS=['Pronome reflexivo','Partícula apassivadora','Índice de indeterminação'];
+var JOGO_SE=[
+ { fr:'Ele se feriu com a faca.', certa:0, w:'Cabe "a si mesmo": ele feriu a si próprio. É pronome reflexivo, voz reflexiva.' },
+ { fr:'Alugam-se salas comerciais.', certa:1, w:'Vira "Salas comerciais são alugadas". É partícula apassivadora, voz passiva sintética.' },
+ { fr:'Precisa-se de vendedores.', certa:2, w:'"Precisar de" é transitivo indireto. Não há sujeito, por isso o verbo fica no singular. É índice de indeterminação.' },
+ { fr:'Os dois amigos abraçaram-se na porta.', certa:0, w:'Cabe "um ao outro": é reflexiva recíproca, que também é pronome reflexivo.' },
+ { fr:'Vive-se muito bem nesta cidade.', certa:2, w:'"Viver" aqui é intransitivo e não tem objeto direto. Não há sujeito: índice de indeterminação.' },
+ { fr:'Fez-se o bolo para a festa.', certa:1, w:'Vira "O bolo foi feito". "O bolo" é o sujeito: partícula apassivadora.' },
+ { fr:'Trata-se de um erro grave.', certa:2, w:'"Tratar de" é transitivo indireto, então nunca é apassivadora. Sempre índice de indeterminação.' },
+ { fr:'A moça penteou-se com cuidado.', certa:0, w:'Cabe "a si mesma": a moça penteou a si própria. Pronome reflexivo.' }
+];
+function montarJogoSe(){
+  var h='';
+  JOGO_SE.forEach(function(j,i){
+    h+='<div class="jogo-item"><p class="fr">'+(i+1)+'. '+j.fr+'</p><div class="opts">';
+    TIPOS.forEach(function(t,n){ h+='<button class="opt" id="se-'+i+'-'+n+'" data-i="'+i+'" data-n="'+n+'">'+t+'</button>'; });
+    h+='</div><div class="fb" id="fbse-'+i+'"></div></div>';
+  });
+  document.getElementById('jogo-se').innerHTML=h;
+  var bts=document.querySelectorAll('#jogo-se .opt');
+  for(var k=0;k<bts.length;k++) bts[k].onclick=function(){
+    var i=+this.dataset.i, n=+this.dataset.n;
+    if(estado.se[i]!==undefined) return;
+    estado.se[i]=n; salvar(); pintarJogoSe();
+  };
+  pintarJogoSe();
+}
+function pintarJogoSe(){
+  var certos=0, feitos=0;
+  JOGO_SE.forEach(function(j,i){
+    var m=estado.se[i]; if(m===undefined) return;
+    feitos++;
+    TIPOS.forEach(function(_,n){
+      var el=document.getElementById('se-'+i+'-'+n); if(!el) return;
+      el.classList.remove('acertou','errou');
+      if(n===j.certa) el.classList.add('acertou');
+      else if(n===m) el.classList.add('errou');
+    });
+    var fb=document.getElementById('fbse-'+i);
+    var ok=(m===j.certa); if(ok) certos++;
+    fb.className='fb '+(ok?'bom':'ruim');
+    fb.innerHTML=(ok?'✅ Isso. ':'❌ Não é essa. A certa é <b>'+TIPOS[j.certa]+'</b>. ')+j.w;
+    fb.style.display='block';
+  });
+  document.getElementById('placar-se').textContent= feitos? ('Você acertou '+certos+' de '+feitos+' respondidas (são '+JOGO_SE.length+' no total).') : '';
+}
+
+/* ===== JOGO: PLACAS ===== */
+var PLACAS=[
+ { txt:'VENDE-SE CASAS', certa:1, w:'"Casas" é o sujeito e está no plural, então o verbo tem que ir para o plural: <b>VENDEM-SE CASAS</b>. Confira passando para a analítica: "Casas são vendidas".' },
+ { txt:'ALUGAM-SE APARTAMENTOS', certa:0, w:'Está certa. O sujeito "apartamentos" está no plural e o verbo também. "Apartamentos são alugados".' },
+ { txt:'PRECISAM-SE DE VENDEDORES', certa:1, w:'Com a preposição <b>de</b>, o verbo é transitivo indireto e a frase não tem sujeito. O certo é <b>PRECISA-SE DE VENDEDORES</b>, sempre no singular.' },
+ { txt:'CONSERTA-SE COMPUTADOR', certa:0, w:'Está certa. "Computador" está no singular e o verbo também. "Computador é consertado".' },
+ { txt:'FAZEM-SE UNHAS E SOBRANCELHAS', certa:0, w:'Está certa. O sujeito é "unhas e sobrancelhas", no plural, e o verbo acompanhou.' },
+ { txt:'ACEITA-SE CARTÕES', certa:1, w:'"Cartões" é o sujeito e está no plural: o certo é <b>ACEITAM-SE CARTÕES</b>. "Cartões são aceitos".' }
+];
+var OPCOES_PLACA=['✅ Está certa','❌ Está errada'];
+function montarPlacas(){
+  var h='';
+  PLACAS.forEach(function(p,i){
+    h+='<div class="jogo-item"><div class="placa">'+p.txt+'</div><div class="opts">';
+    OPCOES_PLACA.forEach(function(t,n){ h+='<button class="opt" id="pl-'+i+'-'+n+'" data-i="'+i+'" data-n="'+n+'">'+t+'</button>'; });
+    h+='</div><div class="fb" id="fbpl-'+i+'"></div></div>';
+  });
+  document.getElementById('jogo-placas').innerHTML=h;
+  var bts=document.querySelectorAll('#jogo-placas .opt');
+  for(var k=0;k<bts.length;k++) bts[k].onclick=function(){
+    var i=+this.dataset.i, n=+this.dataset.n;
+    if(estado.placas[i]!==undefined) return;
+    estado.placas[i]=n; salvar(); pintarPlacas();
+  };
+  pintarPlacas();
+}
+function pintarPlacas(){
+  var certos=0, feitos=0;
+  PLACAS.forEach(function(p,i){
+    var m=estado.placas[i]; if(m===undefined) return;
+    feitos++;
+    OPCOES_PLACA.forEach(function(_,n){
+      var el=document.getElementById('pl-'+i+'-'+n); if(!el) return;
+      el.classList.remove('acertou','errou');
+      if(n===p.certa) el.classList.add('acertou');
+      else if(n===m) el.classList.add('errou');
+    });
+    var ok=(m===p.certa); if(ok) certos++;
+    var fb=document.getElementById('fbpl-'+i);
+    fb.className='fb '+(ok?'bom':'ruim');
+    fb.innerHTML=(ok?'✅ Isso. ':'❌ Não. ')+p.w;
+    fb.style.display='block';
+  });
+  document.getElementById('placar-placas').textContent= feitos? ('Você acertou '+certos+' de '+feitos+' respondidas (são '+PLACAS.length+' no total).') : '';
+}
+
+/* ===== FLIP CARDS ===== */
+var CARDS=[
+ ['Voz ativa','O que é?','O sujeito é o <b>agente</b>: é ele quem pratica a ação. Não depende de o verbo ter objeto direto. Ex.: "Felipe plantou flores."'],
+ ['Voz passiva','O que é?','O sujeito é <b>paciente</b>: recebe a ação. Ex.: "O relatório foi anotado pelos auditores."'],
+ ['Voz reflexiva','O que é?','O sujeito é <b>agente e paciente</b> ao mesmo tempo. Ex.: "Ela levantou-se da cadeira."'],
+ ['Passiva analítica','Qual é a fórmula?','sujeito paciente + verbo <b>SER</b> + particípio (+ agente da passiva). Ex.: "O bolo foi feito pela mamãe."'],
+ ['Passiva sintética','Qual é a fórmula?','verbo transitivo direto na 3ª pessoa + <b>SE</b> + sujeito paciente. Ex.: "Vende-se um apartamento."'],
+ ['Agente da passiva','O que é e como aparece?','É quem praticou a ação na voz passiva. Vem depois da preposição <b>por</b> (pelo, pela, pelos, pelas) e às vezes <b>de</b>. Pode ser omitido.'],
+ ['Ativa → passiva','Quais são os 4 passos?','1) objeto direto vira sujeito · 2) entra SER no mesmo tempo · 3) verbo principal vira particípio · 4) sujeito antigo vai ao fim com "por".'],
+ ['Quem pode virar passiva?','Qual é a condição?','Só verbos com <b>objeto direto</b>. Transitivo indireto e intransitivo não formam voz passiva.'],
+ ['SE reflexivo','Como reconhecer?','Cabe <b>"a si mesmo"</b> ou <b>"um ao outro"</b>. Ex.: "Ele se feriu." / "Os dois se abraçaram."'],
+ ['SE apassivador','Como reconhecer?','Dá para virar <b>"é vendido / são alugados"</b>. O verbo é transitivo direto e concorda com o sujeito. Ex.: "Alugam-se salas."'],
+ ['SE índice de indeterminação','Como reconhecer?','O verbo <b>não</b> é transitivo direto (é indireto, intransitivo ou de ligação), não há sujeito, e o verbo fica sempre na <b>3ª pessoa do singular</b>. Ex.: "Precisa-se de vendedores."'],
+ ['Reflexiva recíproca','O que é?','Duas ou mais pessoas fazendo a ação <b>uma na outra</b>. Continua sendo voz reflexiva. Ex.: "Maria e João amam-se."']
+];
+function montarCards(){
+  var h='';
+  CARDS.forEach(function(c,i){
+    h+='<div class="card3d'+(estado.viradas[i]?' virado':'')+'" id="cd-'+i+'" data-i="'+i+'"><div class="faces">'+
+       '<div class="face frente"><b>'+c[0]+'</b><small>'+c[1]+'</small><small style="color:var(--ciano);">toque para virar</small></div>'+
+       '<div class="face verso">'+c[2]+'</div></div></div>';
+  });
+  document.getElementById('cards').innerHTML=h;
+  var cds=document.querySelectorAll('.card3d');
+  for(var k=0;k<cds.length;k++) cds[k].onclick=function(){
+    this.classList.toggle('virado');
+    estado.viradas[+this.dataset.i]=this.classList.contains('virado'); salvar();
+  };
+}
+
+/* ===== PEGADINHAS E GLOSSÁRIO ===== */
+var PEGADINHAS=[
+ ['"Precisam-se de vendedores" está errado.','Com a preposição <b>de</b> não há sujeito: o certo é <b>"Precisa-se de vendedores"</b>.'],
+ ['"Aluga-se casas" está errado.','"Casas" é sujeito e está no plural: <b>"Alugam-se casas"</b>.'],
+ ['Voz ativa não depende de objeto direto.','"A secretária telefonou aos clientes" está na voz ativa.'],
+ ['O tempo verbal não pode mudar.','"A mamãe fez o bolo" vira <b>"O bolo foi feito"</b>, nunca "é feito".'],
+ ['Frase sem agente continua passiva.','"O relatório foi entregue" é voz passiva mesmo sem dizer quem entregou.'],
+ ['Transitivo indireto não vira passiva.','"Ela assistiu ao filme" não tem passiva. "Ela viu o filme" tem.'],
+ ['Nem todo SE é apassivador.','Passe sempre pelas três perguntas antes de decidir.'],
+ ['Recíproca não é uma quarta voz.','"Maria e João amam-se" está na voz reflexiva, na forma recíproca.'],
+ ['O particípio concorda com o sujeito.','"As casas foram <b>vendidas</b>", e não "vendido".'],
+ ['"Trata-se de" é sempre índice de indeterminação.','Nunca é apassivadora, porque "tratar de" é transitivo indireto.']
+];
+var GLOSSARIO=[
+ ['Voz verbal','A relação entre o verbo e o sujeito: se o sujeito faz, recebe, ou faz e recebe a ação.'],
+ ['Sujeito agente','Quem pratica a ação do verbo.'],
+ ['Sujeito paciente','Quem recebe a ação do verbo.'],
+ ['Agente da passiva','Na voz passiva, quem praticou a ação. Vem com "por" ou "de".'],
+ ['Particípio','Forma do verbo terminada em -ado ou -ido (e formas irregulares como feito, escrito, visto, aberto).'],
+ ['Verbo transitivo direto','Verbo que pede complemento sem preposição (o objeto direto). É o único que forma voz passiva.'],
+ ['Verbo transitivo indireto','Verbo que pede complemento com preposição. Não forma voz passiva.'],
+ ['Partícula apassivadora','O "se" que forma a voz passiva sintética, junto de verbo transitivo direto.'],
+ ['Índice de indeterminação do sujeito','O "se" que aparece quando a frase não tem sujeito. O verbo fica na 3ª pessoa do singular.'],
+ ['Pronome reflexivo','Me, te, se, nos, vos — marca que a ação volta para o próprio sujeito.']
+];
+(function(){
+  var h=''; PEGADINHAS.forEach(function(p,i){ h+='<div class="peg"><b>'+(i+1)+'. '+p[0]+'</b><br>'+p[1]+'</div>'; });
+  document.getElementById('pegadinhas').innerHTML=h;
+  var g=''; GLOSSARIO.forEach(function(x){ g+='<div class="glos"><b>'+x[0]+'</b> — '+x[1]+'</div>'; });
+  document.getElementById('glossario').innerHTML=g;
+})();
+
+/* ===== EXPORTAR / IMPORTAR / ZERAR ===== */
+document.getElementById('b-exportar').onclick=function(){
+  var accSe=0,totSe=0,accPl=0,totPl=0;
+  JOGO_SE.forEach(function(j,i){ if(estado.se[i]!==undefined){ totSe++; if(estado.se[i]===j.certa) accSe++; } });
+  PLACAS.forEach(function(p,i){ if(estado.placas[i]!==undefined){ totPl++; if(estado.placas[i]===p.certa) accPl++; } });
+  var saida={ material:'resumo', kit:'vozes-verbais-8ano', quando:estado.quando,
+    rolagemMaxima:estado.rolagem,
+    detectorDoSe:{ respondidas:totSe, acertos:accSe, total:JOGO_SE.length },
+    placasDeRua:{ respondidas:totPl, acertos:accPl, total:PLACAS.length },
+    cartasViradas:Object.keys(estado.viradas).length };
+  var b=new Blob([JSON.stringify(saida,null,2)],{type:'application/json'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='resumo-vozes-verbais.json'; a.click();
+};
+document.getElementById('b-importar').onclick=function(){ document.getElementById('arq-importar').click(); };
+document.getElementById('arq-importar').onchange=function(ev){
+  var f=ev.target.files[0]; if(!f) return; var r=new FileReader();
+  r.onload=function(){ try{ var o=JSON.parse(r.result);
+    if(o && o.material==='resumo'){ estado.rolagem=o.rolagemMaxima||0; salvar(); medirRolagem();
+      abrirModal('Pronto!','Os dados do arquivo foram carregados.',null,'Fechar'); }
+    else abrirModal('Arquivo estranho','Este arquivo não parece ser o do Resumo.',null,'Fechar');
+  }catch(e){ abrirModal('Não deu certo','Não consegui ler esse arquivo.',null,'Fechar'); } };
+  r.readAsText(f); ev.target.value='';
+};
+document.getElementById('b-zerar').onclick=function(){
+  abrirModal('Apagar tudo?','O progresso deste Resumo será apagado. Não dá para desfazer.', function(){
+    estado={rolagem:0,se:{},placas:{},viradas:{},quando:null};
+    try{ LS.removeItem(CHAVE); }catch(e){}
+    pintarInfo(); montarJogoSe(); montarPlacas(); montarCards(); medirRolagem();
+  },'Apagar');
+};
+
+/* ===== INÍCIO ===== */
+carregar(); pintarInfo(); pintarMaquina(); montarJogoSe(); montarPlacas(); montarCards(); medirRolagem();
+</script>
+</body>
+</html>

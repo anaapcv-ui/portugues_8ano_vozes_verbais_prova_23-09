@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estúdio de Vozes · Kit de estudo</title>
+<style>
+:root{
+  --preto:#0d0f14; --console:#161a23; --console2:#1e2430; --borda:#2c3444;
+  --texto:#e8ecf4; --suave:#a7b0c2; --dourado:#f3c14b; --vermelho:#e0443e;
+  --verde:#39d98a; --ciano:#4ecdc4; --amarelo:#ffd93d; --roxo:#a78bfa;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--preto);color:var(--texto);
+  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;font-size:17px;line-height:1.7;}
+a{color:var(--dourado);}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px 80px;}
+header.top{background:linear-gradient(135deg,#0d0f14,#241a08 55%,#3a1210);
+  border-bottom:3px solid var(--dourado);padding:38px 16px 30px;text-align:center;}
+header.top .inner{max-width:900px;margin:0 auto;}
+.kicker{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--dourado);font-weight:700;}
+h1{margin:10px 0 6px;font-size:36px;line-height:1.15;}
+.sub{color:#d8c79c;font-size:16px;margin:0;}
+.onair{display:inline-block;background:var(--vermelho);color:#fff;font-weight:800;font-size:11px;
+  letter-spacing:.14em;padding:4px 12px;border-radius:20px;margin-top:14px;}
+.secao{background:var(--console);border:1px solid var(--borda);border-radius:16px;padding:22px;margin:22px 0;}
+.secao h2{margin:0 0 6px;font-size:22px;color:var(--dourado);}
+.secao .legenda{color:var(--suave);font-size:14px;margin:0 0 16px;}
+
+/* materiais */
+.mats{display:grid;gap:12px;}
+.mat{display:flex;gap:14px;align-items:center;background:var(--preto);border:1px solid var(--borda);
+  border-radius:14px;padding:16px;text-decoration:none;color:var(--texto);transition:border-color .2s;}
+.mat:hover{border-color:var(--dourado);}
+.mat .ic{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-size:25px;flex:0 0 auto;background:var(--console2);}
+.mat .tx{flex:1;}
+.mat .tx b{display:block;font-size:18px;}
+.mat .tx small{color:var(--suave);font-size:14px;display:block;margin-top:2px;}
+.mat .ordem{font-size:12px;color:var(--suave);border:1px solid var(--borda);border-radius:20px;padding:2px 10px;flex:0 0 auto;}
+.mat.m1 .ic{color:var(--verde);} .mat.m2 .ic{color:var(--dourado);}
+.mat.m3 .ic{color:var(--ciano);} .mat.m4 .ic{color:var(--vermelho);}
+
+/* cronograma */
+.dia{background:var(--preto);border-left:4px solid var(--dourado);border-radius:0 10px 10px 0;
+  padding:13px 16px;margin-bottom:11px;}
+.dia b{color:var(--dourado);}
+.dia small{color:var(--suave);display:block;font-size:14px;}
+
+.postit{background:#f7e06a;color:#33290a;border-radius:4px;padding:14px 16px;margin-bottom:11px;
+  box-shadow:3px 3px 0 rgba(0,0,0,.35);font-size:16px;}
+.postit b{color:#7a5c00;}
+
+/* relatorio */
+.liberar input{background:var(--preto);border:1px solid var(--borda);color:var(--texto);border-radius:8px;
+  padding:10px;font-family:'Courier New',monospace;font-size:17px;letter-spacing:.1em;width:180px;text-transform:uppercase;}
+.liberar input:focus{outline:none;border-color:var(--verde);}
+.btn{background:var(--console2);color:var(--texto);border:1px solid var(--borda);border-radius:8px;
+  padding:9px 14px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;}
+.btn:hover{border-color:var(--dourado);color:var(--dourado);}
+.btn.prim{background:var(--dourado);color:#2b2005;border-color:var(--dourado);}
+.msg{font-size:14px;margin:8px 0 0;display:none;}
+.msg.ruim{color:#ff9b96;} .msg.bom{color:var(--verde);}
+.rel{display:none;margin-top:18px;}
+.relbox{background:var(--preto);border:1px solid var(--borda);border-radius:12px;padding:15px;margin-bottom:12px;}
+.relbox h3{margin:0 0 8px;font-size:17px;color:var(--ciano);}
+.relbox .linha{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed var(--borda);
+  padding:6px 0;font-size:15px;flex-wrap:wrap;}
+.relbox .linha:last-child{border-bottom:none;}
+.relbox .linha span:last-child{font-weight:700;color:var(--dourado);}
+.relbox ul{margin:8px 0 0;padding-left:20px;font-size:15px;color:var(--suave);}
+.vazio{color:var(--suave);font-size:15px;}
+footer{text-align:center;color:var(--suave);font-size:13px;padding:30px 16px;}
+@media(max-width:600px){h1{font-size:28px;}body{font-size:16px;}}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="inner">
+  <div class="kicker">Colégio São José · 8º ano · Língua Portuguesa</div>
+  <h1>🎙️ Estúdio de Vozes</h1>
+  <p class="sub">Vozes verbais · voz ativa, passiva e reflexiva · funções do "se"</p>
+  <div class="onair">PROVA 23/09/2026</div>
+</div></header>
+
+<div class="wrap">
+
+  <section class="secao">
+    <h2>📻 Os quatro materiais, nesta ordem</h2>
+    <p class="legenda">A ordem importa: ler, testar enquanto está fresco, fechar os buracos, e só então treinar valendo.</p>
+    <div class="mats">
+      <a class="mat m1" href="leitura-guiada.html"><div class="ic">📖</div>
+        <div class="tx"><b>Leitura Guiada</b><small>8 cabines de gravação, com perguntas para escrever em cada uma</small></div>
+        <span class="ordem">1º</span></a>
+      <a class="mat m2" href="quiz.html"><div class="ic">🎯</div>
+        <div class="tx"><b>Quiz</b><small>18 questões objetivas + código MED para abrir o gabarito</small></div>
+        <span class="ordem">2º</span></a>
+      <a class="mat m3" href="resumo.html"><div class="ic">🗺️</div>
+        <div class="tx"><b>Resumo</b><small>máquina de transformar frases, detector do SE, placas de rua e cartas</small></div>
+        <span class="ordem">3º</span></a>
+      <a class="mat m4" href="simulado.html"><div class="ic">📝</div>
+        <div class="tx"><b>Simulado</b><small>28 questões no formato da prova + código SIM</small></div>
+        <span class="ordem">4º</span></a>
+    </div>
+  </section>
+
+  <section class="secao">
+    <h2>🗓️ Cronograma até a prova</h2>
+    <p class="legenda">Três dias, pouco por vez. Não vale fazer tudo na véspera.</p>
+    <div class="dia"><b>Domingo, 20/09 — ouvir a matéria</b>
+      <small>Leitura Guiada, cabines 1 a 5. Escrever as respostas com as próprias palavras, sem copiar o texto.</small></div>
+    <div class="dia"><b>Segunda, 21/09 — a parte difícil</b>
+      <small>Leitura Guiada, cabines 6 a 8 (passiva sintética, reflexiva e as três identidades do SE) + Quiz.</small></div>
+    <div class="dia"><b>Terça, 22/09 — fixar e treinar</b>
+      <small>Resumo inteiro (com os dois jogos) e depois o Simulado. Revisar só o que der errado.</small></div>
+    <div class="dia"><b>Quarta, 23/09 — antes de sair</b>
+      <small>Olhar só o mapa da primeira tela do Resumo e as 10 pegadinhas. Nada de matéria nova.</small></div>
+  </section>
+
+  <section class="secao">
+    <h2>👩 Recado para a mãe</h2>
+    <div class="postit"><b>📌 Sobre os códigos:</b> ao terminar o Quiz e o Simulado aparece um código
+      (<b>MED-00-XX</b> e <b>SIM-00-XX</b>). Os dois números do meio são a quantidade de acertos.
+      Peça o código: é ele que libera o gabarito comentado, e ele já diz a nota.</div>
+    <div class="postit"><b>📌 A questão 28 do Simulado é discursiva.</b> Ela não entra na nota automática.
+      A resposta modelo aparece no gabarito, para a senhora corrigir junto com ele.</div>
+    <div class="postit"><b>📌 Tudo fica salvo sozinho</b> no próprio aparelho. Ele pode fechar e voltar depois
+      que as respostas continuam lá. Se usar outro aparelho, o progresso não vai junto.</div>
+  </section>
+
+  <section class="secao liberar">
+    <h2>📊 Relatório para os pais</h2>
+    <p class="legenda">Digite o código <b>PAIS-77</b>, ou um dos códigos MED/SIM que ele recebeu.</p>
+    <input type="text" id="in-codigo" placeholder="PAIS-77" maxlength="9">
+    <button class="btn prim" id="b-abrir">Abrir relatório</button>
+    <p class="msg" id="msg-codigo"></p>
+    <div class="rel" id="rel"></div>
+  </section>
+
+</div>
+
+<footer>Estúdio de Vozes · material de estudo do jovem aprendiz · feito sob medida para a prova de 23/09</footer>
+
+<script>
+var MEM={};
+var LS=(function(){ try{ var k='__t'+Date.now(); localStorage.setItem(k,'1'); localStorage.removeItem(k); return localStorage; }
+  catch(e){ return { getItem:function(){return null;}, setItem:function(){}, removeItem:function(){} }; } })();
+
+function ler(chave){ try{ var r=LS.getItem(chave); return r?JSON.parse(r):null; }catch(e){ return null; } }
+
+function codigoValido(v){
+  if(v==='PAIS-77') return true;
+  var q=ler('vv8_quiz'), s=ler('vv8_simulado');
+  if(q && q.codigo && v===q.codigo) return true;
+  if(s && s.codigo && v===s.codigo) return true;
+  return false;
+}
+
+function montarRelatorio(){
+  var lg=ler('vv8_leitura'), qz=ler('vv8_quiz'), rs=ler('vv8_resumo'), sm=ler('vv8_simulado');
+  var h='';
+
+  /* --- Leitura Guiada --- */
+  h+='<div class="relbox"><h3>📖 Leitura Guiada</h3>';
+  if(!lg || !lg.blocos){ h+='<p class="vazio">Ainda não foi aberta.</p>'; }
+  else{
+    var feitos=0, vermelhas=0, naos=0, listaV=[], listaN=[];
+    for(var i=0;i<8;i++){
+      var b=lg.blocos[i]; if(!b) continue;
+      if(b.feito) feitos++;
+      (b.perg||[]).forEach(function(p,j){
+        if(p && p.transcrita){ vermelhas++; listaV.push('Cabine '+(i+1)+', pergunta '+(j+1)); }
+        if(p && p.chk) p.chk.forEach(function(c){ if(c==='n'){ naos++; listaN.push('Cabine '+(i+1)+', pergunta '+(j+1)); } });
+      });
+    }
+    h+='<div class="linha"><span>Cabines concluídas</span><span>'+feitos+' de 8</span></div>'+
+       '<div class="linha"><span>Respostas marcadas em vermelho (copiadas do texto)</span><span>'+vermelhas+'</span></div>'+
+       '<div class="linha"><span>Pontos do checklist marcados como "não"</span><span>'+naos+'</span></div>';
+    if(listaV.length) h+='<ul><li><b>Copiadas:</b> '+listaV.join(' · ')+'</li></ul>';
+    if(listaN.length) h+='<ul><li><b>Pontos que ele mesmo marcou como não:</b> '+listaN.join(' · ')+'</li></ul>';
+  }
+  h+='</div>';
+
+  /* --- Quiz --- */
+  h+='<div class="relbox"><h3>🎯 Quiz</h3>';
+  if(!qz || !qz.entregue){ h+='<p class="vazio">Ainda não foi entregue.</p>'; }
+  else{
+    h+='<div class="linha"><span>Acertos</span><span>'+qz.acertos+' de 18</span></div>'+
+       '<div class="linha"><span>Aproveitamento</span><span>'+Math.round(qz.acertos/18*100)+'%</span></div>'+
+       '<div class="linha"><span>Código gerado</span><span>'+(qz.codigo||'—')+'</span></div>'+
+       '<div class="linha"><span>Gabarito já aberto?</span><span>'+(qz.liberado?'sim':'não')+'</span></div>';
+  }
+  h+='</div>';
+
+  /* --- Resumo --- */
+  h+='<div class="relbox"><h3>🗺️ Resumo</h3>';
+  if(!rs){ h+='<p class="vazio">Ainda não foi aberto.</p>'; }
+  else{
+    var se=rs.se||{}, pl=rs.placas||{};
+    var seT=Object.keys(se).length, plT=Object.keys(pl).length;
+    h+='<div class="linha"><span>Quanto do resumo ele percorreu</span><span>'+(rs.rolagem||0)+'%</span></div>'+
+       '<div class="linha"><span>Detector do SE — frases respondidas</span><span>'+seT+' de 8</span></div>'+
+       '<div class="linha"><span>Placas de rua — placas respondidas</span><span>'+plT+' de 6</span></div>'+
+       '<div class="linha"><span>Cartas de memória viradas</span><span>'+Object.keys(rs.viradas||{}).length+' de 12</span></div>';
+  }
+  h+='</div>';
+
+  /* --- Simulado --- */
+  h+='<div class="relbox"><h3>📝 Simulado</h3>';
+  if(!sm || !sm.entregue){ h+='<p class="vazio">Ainda não foi entregue.</p>'; }
+  else{
+    h+='<div class="linha"><span>Acertos nas objetivas</span><span>'+sm.acertos+' de 27</span></div>'+
+       '<div class="linha"><span>Aproveitamento</span><span>'+Math.round(sm.acertos/27*100)+'%</span></div>'+
+       '<div class="linha"><span>Código gerado</span><span>'+(sm.codigo||'—')+'</span></div>'+
+       '<div class="linha"><span>Questão discursiva (28)</span><span>corrigir com a resposta modelo</span></div>';
+  }
+  h+='</div>';
+
+  h+='<p style="font-size:14px;color:var(--suave);margin:0;">Este relatório lê o que está salvo neste aparelho. '+
+     'Se ele estudou no celular e a senhora abriu no computador, os números não aparecem.</p>';
+
+  var el=document.getElementById('rel');
+  el.innerHTML=h; el.style.display='block';
+}
+
+document.getElementById('b-abrir').onclick=function(){
+  var v=document.getElementById('in-codigo').value.trim().toUpperCase();
+  var m=document.getElementById('msg-codigo');
+  if(codigoValido(v)){ m.className='msg bom'; m.textContent='Relatório aberto.'; m.style.display='block'; montarRelatorio(); }
+  else { m.className='msg ruim'; m.textContent='Código não confere. Use PAIS-77 ou um dos códigos MED/SIM que ele recebeu.'; m.style.display='block'; }
+};
+document.getElementById('in-codigo').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('b-abrir').click(); });
+</script>
+</body>
+</html>
